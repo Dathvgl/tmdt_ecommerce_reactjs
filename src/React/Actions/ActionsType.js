@@ -1,0 +1,19 @@
+export const SIGNUP_START = "SIGNUP_START";
+export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
+export const SIGNUP_FAIL = "SIGNUP_FAIL";
+
+export const SIGNIN_START = "SIGNIN_START";
+export const SIGNIN_SUCCESS = "SIGNIN_SUCCESS";
+export const SIGNIN_FAIL = "SIGNIN_FAIL";
+
+export const SIGNOUT_START = "SIGNOUT_START";
+export const SIGNOUT_SUCCESS = "SIGNOUT_SUCCESS";
+export const SIGNOUT_FAIL = "SIGNOUT_FAIL";
+
+export const SET_USER = "SET_USER";
+
+export const SET_ADDPANEL = "SET_ADDPANEL";
+
+export const SET_EXTENSIONS = "SET_EXTENSIONS";
+export const SET_FIRESTORE = "SET_FIRESTORE";
+export const SET_REALTIME = "SET_REALTIME";
