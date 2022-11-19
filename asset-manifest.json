@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/tmdt_ecommerce_reactjs/static/css/main.adc87ea2.css",
+    "main.js": "/tmdt_ecommerce_reactjs/static/js/main.324cdc70.js",
+    "static/media/defaultAvatar.jpg": "/tmdt_ecommerce_reactjs/static/media/defaultAvatar.4856cb13514a918e943e.jpg",
+    "static/media/logo.png": "/tmdt_ecommerce_reactjs/static/media/logo.b5753884d4702e5db7c1.png",
+    "index.html": "/tmdt_ecommerce_reactjs/index.html",
+    "main.adc87ea2.css.map": "/tmdt_ecommerce_reactjs/static/css/main.adc87ea2.css.map",
+    "main.324cdc70.js.map": "/tmdt_ecommerce_reactjs/static/js/main.324cdc70.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.adc87ea2.css",
+    "static/js/main.324cdc70.js"
+  ]
+}
