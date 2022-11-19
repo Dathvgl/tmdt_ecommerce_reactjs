@@ -18,6 +18,7 @@
     "bootstrap": "^5.2.1",
     "chart.js": "^3.9.1",
     "firebase": "^9.9.4",
+    "gh-pages": "^4.0.0",
     "nanoid": "^4.0.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "rating-star": "^1.1.0",
