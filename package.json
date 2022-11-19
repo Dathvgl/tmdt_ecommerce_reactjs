@@ -6,6 +6,7 @@
     "node": "16.14.0",
     "npm": "8.3.1"
   },
+  "homepage": "https://sofar-soguk.github.io/deploy-github/",
   "dependencies": {
     "@craco/craco": "^7.0.0",
     "@reduxjs/toolkit": "^1.8.5",
@@ -38,10 +39,12 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts --max_old_space_size=1024 start",
-    "build": "react-scripts --max_old_space_size=1024 build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
