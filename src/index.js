@@ -1,7 +1,7 @@
 // import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
-import { BrowserRouter as Router } from "react-router-dom";
+import { HashRouter as Router } from "react-router-dom";
 import { PersistGate } from "redux-persist/lib/integration/react";
 import Home from "./Home";
 import { persistor, store } from "./React/Store/Store";
@@ -20,7 +20,7 @@ root.render(
       }}
     />
     <PersistGate persistor={persistor}>
-      <Router>
+      <Router basename="/">
         <div style={{ position: "relative" }}>
           <Home />
         </div>
