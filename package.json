@@ -6,7 +6,7 @@
     "node": "16.14.0",
     "npm": "8.3.1"
   },
-  "homepage": "https://sofar-soguk.github.io/deploy-github/",
+  "homepage": "https://Dathvgl.github.io/tmdt_ecommerce_reactjs/",
   "dependencies": {
     "@craco/craco": "^7.0.0",
     "@reduxjs/toolkit": "^1.8.5",
