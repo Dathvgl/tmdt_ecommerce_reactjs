@@ -20,6 +20,7 @@ import { setExtensions } from "../React/Actions/Firebase/Actions";
 import DetailItem from "./DetailItem";
 import "react-toastify/dist/ReactToastify.css";
 import { Image } from "antd";
+import { PopupDialog } from "../ComponentsTSX";
 
 function SpecificItemClient() {
   const node = process.env?.REACT_APP_NODE;
@@ -118,11 +119,7 @@ function SpecificItemClient() {
   const [detailed, setDetailed] = React.useState(false);
   const [racmted, setRacmted] = React.useState(false);
 
-  const onClickDetailed = () => {
-    document.body.style.overflow = "hidden";
-    setDetailed(true);
-  };
-
+  const onClickDetailed = () => setDetailed(true);
   const onClickRacmted = React.useCallback(() => {
     if (!currentInfo) {
       navigate("/Login/SignIn");
@@ -134,12 +131,10 @@ function SpecificItemClient() {
       return;
     }
 
-    document.body.style.overflow = "hidden";
     setRacmted(true);
   }, [currentInfo, navigate]);
 
   const callbackDetailed = React.useCallback(() => {
-    document.body.style.overflow = "visible";
     setDetailed(false);
     setRacmted(false);
   }, []);
@@ -192,18 +187,22 @@ function SpecificItemClient() {
 
   return (
     <React.Fragment>
-      <DetailItem
-        callback={callbackDetailed}
-        display={detailed}
-        item={product}
-      />
-      <RateCommentType
-        productId={product?.id}
-        rate={product?.coBan?.danhGia}
-        totalRate={product?.coBan?.tongDanhGia}
-        callback={callbackDetailed}
-        display={racmted}
-      />
+      {detailed && (
+        <PopupDialog width={"50vw"} callback={callbackDetailed}>
+          <DetailItem display={detailed} item={product} />
+        </PopupDialog>
+      )}
+      {racmted && (
+        <PopupDialog width={"50vw"} centered callback={callbackDetailed}>
+          <RateCommentType
+            productId={product?.id}
+            rate={product?.coBan?.danhGia}
+            totalRate={product?.coBan?.tongDanhGia}
+            callback={callbackDetailed}
+            display={racmted}
+          />
+        </PopupDialog>
+      )}
       <Padding all={3}>
         <h3>{product?.coBan?.ten}</h3>
         <hr />
@@ -397,34 +396,11 @@ function RateCommentType(props) {
 
   const dispatch = useDispatch();
 
-  const { productId, rate, totalRate, callback, display } = props;
+  const { productId, rate, totalRate, callback } = props;
 
   const { currentInfo } = useSelector((state) => state?.user);
   const { extensions } = useSelector((state) => state?.fireBase);
   const { realTime } = useSelector((state) => state.fireBase?.extensions);
-
-  const popUpStyle = {
-    display: !display ? "none" : "block",
-    position: "fixed",
-    top: "0",
-    width: "100vw",
-    height: "100vh",
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-    zIndex: 2,
-  };
-
-  const addStyle = {
-    display: !display ? "none" : "block",
-    position: "fixed",
-    top: "30%",
-    left: "25%",
-    width: "50vw",
-    height: "40vh",
-    backgroundColor: "white",
-    border: "0.1rem solid black",
-    borderRadius: "1rem",
-    zIndex: 3,
-  };
 
   const [rating, setRating] = React.useState(1);
   const [comment, setComment] = React.useState("");
@@ -474,36 +450,33 @@ function RateCommentType(props) {
 
   return (
     <React.Fragment>
-      <div style={popUpStyle} onClick={() => callback()} />
-      <div style={addStyle}>
-        <Padding all={2}>
-          <Column style={{ justifyItems: "unset" }}>
-            <Row mainAxisSize={AxisSize.min}>
-              <b style={{ marginRight: "0.5rem" }}>Mức độ hài lòng:</b>
-              <RatingStar
-                id="rating"
-                clickable
-                rating={rating}
-                onRatingChange={onRatingChange}
-              />
-            </Row>
-            <Form.Group className="mb-3">
-              <Form.Label>
-                <b>Bạn có hài lòng về sản phẩm?</b>
-              </Form.Label>
-              <Form.Control
-                placeholder="Hãy chia sẻ cảm nhận, đánh giá của bạn về sản phẩm này."
-                as="textarea"
-                rows={3}
-                onChange={onChangeInput}
-              />
-            </Form.Group>
-            <Row>
-              <Button onClick={onRacmtSubmit}>Gửi nhận xét - đánh giá</Button>
-            </Row>
-          </Column>
-        </Padding>
-      </div>
+      <Padding all={2}>
+        <Column style={{ justifyItems: "unset" }}>
+          <Row mainAxisSize={AxisSize.min}>
+            <b style={{ marginRight: "0.5rem" }}>Mức độ hài lòng:</b>
+            <RatingStar
+              id="rating"
+              clickable
+              rating={rating}
+              onRatingChange={onRatingChange}
+            />
+          </Row>
+          <Form.Group className="mb-3">
+            <Form.Label>
+              <b>Bạn có hài lòng về sản phẩm?</b>
+            </Form.Label>
+            <Form.Control
+              placeholder="Hãy chia sẻ cảm nhận, đánh giá của bạn về sản phẩm này."
+              as="textarea"
+              rows={3}
+              onChange={onChangeInput}
+            />
+          </Form.Group>
+          <Row>
+            <Button onClick={onRacmtSubmit}>Gửi nhận xét - đánh giá</Button>
+          </Row>
+        </Column>
+      </Padding>
     </React.Fragment>
   );
 }

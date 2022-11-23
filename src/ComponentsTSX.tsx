@@ -1,5 +1,4 @@
-import { Table } from "antd";
-import React from "react";
+import { Modal, Table } from "antd";
 import { DivProps } from "./Components/Interface";
 import "antd/dist/antd.min.css";
 
@@ -9,7 +8,7 @@ interface TableResProps extends DivProps {
   onChange: () => void;
 }
 
-export const TableRes: React.FC<TableResProps> = (props: TableResProps) => {
+export function TableRes(props: TableResProps) {
   const { columns, data } = props;
 
   return (
@@ -25,4 +24,33 @@ export const TableRes: React.FC<TableResProps> = (props: TableResProps) => {
       }}
     />
   );
-};
+}
+
+interface PopupDialogProps extends DivProps {
+  width?: number;
+  centered?: boolean;
+  callback: () => void;
+}
+
+export function PopupDialog(props: PopupDialogProps) {
+  const handleOk = () => {
+    props.callback();
+  };
+
+  const handleCancel = () => {
+    props.callback();
+  };
+
+  return (
+    <Modal
+      width={props.width}
+      centered={props.centered}
+      open={true}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      footer={null}
+    >
+      {props.children}
+    </Modal>
+  );
+}

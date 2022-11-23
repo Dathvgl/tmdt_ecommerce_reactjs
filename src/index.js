@@ -1,4 +1,3 @@
-// import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -9,16 +8,7 @@ import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  // <React.StrictMode>
   <Provider store={store}>
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        position: "fixed",
-        backgroundColor: "#d9d9d9",
-      }}
-    />
     <PersistGate persistor={persistor}>
       <Router basename={`/${process.env.PUBLIC_URL}`}>
         <div style={{ position: "relative" }}>
@@ -27,5 +17,4 @@ root.render(
       </Router>
     </PersistGate>
   </Provider>
-  // </React.StrictMode>
 );

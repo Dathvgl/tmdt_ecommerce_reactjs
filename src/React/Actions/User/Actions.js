@@ -64,16 +64,19 @@ export const signinInitiate = (email, password) => {
   return async (dispatch) => {
     dispatch(signinStart);
 
-    await axios
+    const res = await axios
       .post(`${node}/user/signin`, { email: email, password: password })
       .then((res) => {
         const { user, item } = res.data;
         dispatch(signinSuccess(user, item));
+        return res;
       })
       .catch((error) => {
         console.error(error);
         dispatch(signinFail(error?.message));
+        return error;
       });
+    return res?.response?.status;
   };
 };
 

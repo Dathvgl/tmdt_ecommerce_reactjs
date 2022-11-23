@@ -3,6 +3,7 @@ import axios from "axios";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux/es/exports";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import CategoryAdmin from "./Admin/Category";
 import DashboardAdmin from "./Admin/Dashboard";
 import HomeAdmin from "./Admin/HomeAdmin";
@@ -163,11 +164,24 @@ function SignInBase() {
 
   const onSubmit = React.useCallback(async () => {
     const { email, pass } = form;
-    if (!email || !pass) return;
+    if (email === "" && pass === "") {
+      notify("Email và mật khẩu trống");
+      return;
+    }
 
-    dispatch(signinInitiate(email, pass));
-    navigate("/");
-  }, [dispatch, form, navigate]);
+    if (email === "") {
+      notify("Email chưa nhập");
+      return;
+    }
+
+    if (pass === "") {
+      notify("Mật khẩu chưa nhập");
+      return;
+    }
+
+    const res = await dispatch(signinInitiate(email, pass));
+    if (res === 500) notify("Email hoặc mật khẩu bị sai");
+  }, [dispatch, form]);
 
   React.useEffect(() => {
     const listener = (e) => {
@@ -191,6 +205,8 @@ function SignInBase() {
   const inputStyle = { marginBottom: "1rem" };
 
   const inputInStyle = { fontSize: "1.2rem" };
+
+  const notify = (message) => toast(message);
 
   return (
     <React.Fragment>
@@ -218,7 +234,7 @@ function SignInBase() {
           href={"/#"}
           onClick={(e) => {
             e.preventDefault();
-            navigate("/Login/SignUp");
+            navigate("/Login/SignUp", { replace: true });
           }}
         >
           Chưa có tài khoản?
@@ -227,6 +243,18 @@ function SignInBase() {
         <Button type="primary" onClick={onSubmit}>
           Đăng nhập
         </Button>
+        <ToastContainer
+          position="bottom-left"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
       </Column>
     </React.Fragment>
   );
@@ -273,7 +301,25 @@ function SignUpBase() {
 
   const onSubmit = React.useCallback(() => {
     const { display, email, pass, passConfirm } = form;
-    if (pass !== passConfirm) return;
+    if (email === "") {
+      notify("Email chưa nhập");
+      return;
+    }
+
+    if (pass.length < 6) {
+      notify("Mật khẩu ít hơn 6 ký tự");
+      return;
+    }
+
+    if (pass === "" || passConfirm === "") {
+      notify("Mật khẩu chưa nhập");
+      return;
+    }
+
+    if (pass !== passConfirm) {
+      notify("Mật khẩu không khớp");
+      return;
+    }
 
     dispatch(signupInitiate(email, pass, display));
     navigate("/");
@@ -298,6 +344,8 @@ function SignUpBase() {
     setForm((obj) => ({ ...obj, [name]: value }));
   };
 
+  const notify = (message) => toast(message);
+
   const inputStyle = { marginBottom: "1rem" };
 
   const inputInStyle = { fontSize: "1.2rem" };
@@ -305,11 +353,15 @@ function SignUpBase() {
   return (
     <React.Fragment>
       <Column>
-        <h1 style={{ marginBottom: "2rem" }}>Đăng ký</h1>
-        <FloatLabel style={inputStyle} value={form.email} label="Display Name">
+        <h1 style={{ marginBottom: "1rem" }}>Đăng ký</h1>
+        <FloatLabel
+          style={inputStyle}
+          value={form.display}
+          label="Display Name"
+        >
           <Input
             style={inputInStyle}
-            value={form.email}
+            value={form.display}
             onChange={onChangeInput}
             name="display"
             autoComplete="off"
@@ -335,12 +387,12 @@ function SignUpBase() {
         </FloatLabel>
         <FloatLabel
           style={inputStyle}
-          value={form.pass}
+          value={form.passConfirm}
           label="Password Confirm"
         >
           <Input
             style={inputInStyle}
-            value={form.pass}
+            value={form.passConfirm}
             onChange={onChangeInput}
             name="passConfirm"
             type="password"
@@ -350,7 +402,7 @@ function SignUpBase() {
           href={"/#"}
           onClick={(e) => {
             e.preventDefault();
-            navigate("/Login/SignIn");
+            navigate("/Login/SignIn", { replace: true });
           }}
         >
           Đã có tài khoản?
@@ -359,6 +411,18 @@ function SignUpBase() {
         <Button type="primary" onClick={onSubmit}>
           Đăng ký
         </Button>
+        <ToastContainer
+          position="bottom-left"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
       </Column>
     </React.Fragment>
   );

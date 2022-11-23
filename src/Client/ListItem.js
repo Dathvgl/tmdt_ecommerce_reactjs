@@ -344,7 +344,7 @@ function ListItem(props) {
   const node = process.env?.REACT_APP_NODE;
 
   const { products } = props;
-  const itemPage = 2;
+  const itemPage = 5;
 
   const { currentInfo } = useSelector((state) => state?.user);
 
