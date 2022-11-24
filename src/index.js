@@ -6,6 +6,7 @@ import Home from "./Home";
 import { persistor, store } from "./React/Store/Store";
 import "./index.css";
 
+// "homepage": "https://Dathvgl.github.io/tmdt_ecommerce_reactjs/",
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>

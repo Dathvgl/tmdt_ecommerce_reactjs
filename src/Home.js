@@ -12,12 +12,14 @@ import ProductAdmin from "./Admin/Product";
 import UserAdmin from "./Admin/User";
 import CartClient from "./Client/Cart";
 import DashboardClient from "./Client/Dashboard";
+import DetailOrder from "./Client/DetailOrder";
 import HomeClient from "./Client/HomeClient";
 import ListItemClient from "./Client/ListItem";
 import ProfileClient from "./Client/Profile";
 import SpecificItemClient from "./Client/SpecificItem";
 import { Column, Padding, SizedBox } from "./Components/Layout";
 import { Center, FloatLabel } from "./Components/Widget";
+import { auth } from "./Firebase/config";
 import { setExtensions } from "./React/Actions/Firebase/Actions";
 import {
   setUser,
@@ -82,18 +84,10 @@ function Home() {
   }, [categories, dispatch, extensions, products]);
 
   React.useEffect(() => {
-    async function authenState() {
-      await axios
-        .post(`${node}/user/signstate`)
-        .then((res) => {
-          const user = res.data;
-          user ? dispatch(setUser(user)) : dispatch(setUser(null));
-        })
-        .catch((error) => console.error(error));
-    }
-
-    authenState();
-  }, [dispatch, node]);
+    auth.onAuthStateChanged((user) => {
+      user ? setUser(user) : setUser(null);
+    });
+  }, []);
 
   return (
     <React.Fragment>
@@ -106,6 +100,7 @@ function Home() {
           </Route>
           <Route path="GioHang" element={<CartClient />} />
           <Route path="UserProfile" element={<ProfileClient />} />
+          <Route path="DetailOrder/:id" element={<DetailOrder />} />
         </Route>
         <Route path="Login">
           <Route path="SignIn" element={<SignIn />} />
@@ -179,8 +174,7 @@ function SignInBase() {
       return;
     }
 
-    const res = await dispatch(signinInitiate(email, pass));
-    if (res === 500) notify("Email hoặc mật khẩu bị sai");
+    dispatch(signinInitiate(email, pass, notify));
   }, [dispatch, form]);
 
   React.useEffect(() => {
@@ -289,7 +283,6 @@ function SignUpBase() {
   const { currentUser } = useSelector((state) => state?.user);
 
   const [form, setForm] = React.useState({
-    display: "",
     email: "",
     pass: "",
     passConfirm: "",
@@ -300,7 +293,7 @@ function SignUpBase() {
   }, [currentUser, navigate]);
 
   const onSubmit = React.useCallback(() => {
-    const { display, email, pass, passConfirm } = form;
+    const { email, pass, passConfirm } = form;
     if (email === "") {
       notify("Email chưa nhập");
       return;
@@ -321,7 +314,7 @@ function SignUpBase() {
       return;
     }
 
-    dispatch(signupInitiate(email, pass, display));
+    dispatch(signupInitiate(email, pass));
     navigate("/");
   }, [dispatch, form, navigate]);
 
@@ -354,19 +347,6 @@ function SignUpBase() {
     <React.Fragment>
       <Column>
         <h1 style={{ marginBottom: "1rem" }}>Đăng ký</h1>
-        <FloatLabel
-          style={inputStyle}
-          value={form.display}
-          label="Display Name"
-        >
-          <Input
-            style={inputInStyle}
-            value={form.display}
-            onChange={onChangeInput}
-            name="display"
-            autoComplete="off"
-          />
-        </FloatLabel>
         <FloatLabel style={inputStyle} value={form.email} label="Email">
           <Input
             style={inputInStyle}

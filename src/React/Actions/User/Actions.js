@@ -1,4 +1,10 @@
 import axios from "axios";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { auth } from "../../../Firebase/config";
 import * as types from "../ActionsType";
 
 const node = process.env?.REACT_APP_NODE;
@@ -18,30 +24,21 @@ const signupFail = (error) => ({
   payload: error,
 });
 
-export const signupInitiate = (
-  email,
-  password,
-  displayName,
-  role = "client"
-) => {
+export const signupInitiate = (email, password, role = "client") => {
   return async (dispatch) => {
     dispatch(signupStart);
 
-    await axios
-      .post(`${node}/user/signup`, {
-        email: email,
-        password: password,
-        displayName: displayName,
-        role: role,
-      })
-      .then((res) => {
-        const { user, item } = res.data;
+    const res = await createUserWithEmailAndPassword(auth, email, password)
+      .then(async ({ user }) => {
+        const response = await axios.post(`${node}/user/new`, {
+          user,
+          role,
+        });
+        const { item } = response.data;
         dispatch(signupSuccess(user, item));
       })
-      .catch((error) => {
-        console.error(error);
-        dispatch(signupFail(error?.message));
-      });
+      .catch((error) => dispatch(signupFail(error?.message)));
+    console.log(res);
   };
 };
 
@@ -60,23 +57,29 @@ const signinFail = (error) => ({
   payload: error,
 });
 
-export const signinInitiate = (email, password) => {
+export const signinInitiate = (email, password, callback) => {
   return async (dispatch) => {
     dispatch(signinStart);
 
-    const res = await axios
-      .post(`${node}/user/signin`, { email: email, password: password })
-      .then((res) => {
-        const { user, item } = res.data;
-        dispatch(signinSuccess(user, item));
-        return res;
+    await signInWithEmailAndPassword(auth, email, password)
+      .then(async ({ user }) => {
+        const response = await axios.post(`${node}/user/old`, { user });
+        const { item } = response.data;
+
+        const token = await user.getIdToken(true);
+        await axios
+          .post(
+            `${node}/user/token`,
+            {},
+            { headers: { Authorization: `Bearer ${token}` } }
+          )
+          .then(() => dispatch(signinSuccess(user, item)))
+          .catch((error) => {
+            callback(error?.message);
+            dispatch(signinFail(error));
+          });
       })
-      .catch((error) => {
-        console.error(error);
-        dispatch(signinFail(error?.message));
-        return error;
-      });
-    return res?.response?.status;
+      .catch((error) => callback(error?.message));
   };
 };
 
@@ -96,9 +99,7 @@ const signoutFail = (error) => ({
 export const signoutInitiate = () => {
   return async (dispatch) => {
     dispatch(signoutStart);
-
-    await axios
-      .post(`${node}/user/signout`)
+    signOut(auth)
       .then((_) => dispatch(signoutSuccess()))
       .catch((error) => {
         console.error(error);
@@ -115,14 +116,26 @@ export const setUser = (user) => {
         payload: null,
         info: null,
       });
-      return;
+    } else {
+      const res = await axios.get(`${node}/user/old`, { user });
+      const { item } = res.data;
+      const token = user.getIdToken(true);
+      await axios
+        .post(
+          `${node}/user/token`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+        .then((_) => {
+          dispatch({ type: types.SET_USER, payload: user, info: item });
+        })
+        .catch((_) => {
+          dispatch({
+            type: types.SET_USER,
+            payload: null,
+            info: null,
+          });
+        });
     }
-
-    const res = await axios.get(`${node}/user/${user?.uid}`);
-    dispatch({
-      type: types.SET_USER,
-      payload: user,
-      info: res.data,
-    });
   };
 };

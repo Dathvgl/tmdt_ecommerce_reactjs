@@ -1,3 +1,4 @@
+import { Button } from "antd";
 import axios from "axios";
 import React from "react";
 import { Form, Image } from "react-bootstrap";
@@ -15,7 +16,6 @@ import { PageIndex } from "../ComponentsJS";
 import { thousandDot } from "../Function";
 import { setUser } from "../React/Actions/User/Actions";
 import "react-toastify/dist/ReactToastify.css";
-import { Button } from "antd";
 
 function ProfileClient() {
   const navigate = useNavigate();
@@ -262,6 +262,7 @@ function Ordered() {
         .reverse();
 
       setOrdered(array);
+      console.log(array);
 
       const n = array?.length;
       setIndexed(n);
@@ -279,14 +280,15 @@ function Ordered() {
   );
 
   const linkItemStyle = {
-    cursor: "pointer",
     overflow: "hidden",
     display: "-webkit-box",
     WebkitBoxOrient: "vertical",
     WebkitLineClamp: 2,
   };
 
-  const onClickedLink = (id) => navigate(`/SanPham/ChiTiet/${id}`);
+  const onClickedLink = (id, item) => {
+    navigate(`/DetailOrder/${id}`, { state: item });
+  };
 
   return (
     <React.Fragment>
@@ -300,86 +302,98 @@ function Ordered() {
               </React.Fragment>
             ) : (
               <React.Fragment>
-                {list?.map((obj, index) => (
-                  <React.Fragment key={index}>
-                    <Row mainAxisAlign={AxisAlign.spaceBetween}>
-                      <h4>Tình trạng: {obj?.tinhTrang}</h4>
-                      <Row mainAxisSize={AxisSize.min}>
-                        <div style={{ marginRight: "2rem" }}>
-                          Ngày đặt: {obj?.ngayDatHang}
-                        </div>
-                        <div>Ngày giao: {obj?.ngayGiaoHang}</div>
-                      </Row>
-                    </Row>
-                    {Object.keys(obj?.sanPham)?.map((key, count) => {
-                      const item = obj?.sanPham[key];
-                      return (
-                        <React.Fragment key={count}>
-                          <Padding all={1}>
-                            <Row mainAxisAlign={AxisAlign.spaceBetween}>
-                              <Row mainAxisAlign={AxisAlign.start}>
-                                <div
-                                  style={{ display: "flex" }}
-                                  onClick={() => onClickedLink(item?.id)}
-                                >
-                                  <Image
-                                    style={{
-                                      cursor: "pointer",
-                                      width: "5rem",
-                                      marginRight: "1rem",
-                                    }}
-                                    src={item?.hinhAnh}
-                                  />
-                                  <div style={{ width: "30rem" }}>
-                                    <b style={linkItemStyle}>{item?.ten}</b>
+                {list?.map((obj, index) => {
+                  const split = obj?.ngayDatHang?.split(":");
+                  const splitTime = split[1]?.split("-");
+
+                  const dateOrder = new Date(
+                    `${split[0]}:${splitTime[0]}:${splitTime[1]}`
+                  );
+
+                  const dateTranfer = new Date(obj?.ngayGiaoHang);
+
+                  return (
+                    <React.Fragment key={index}>
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => onClickedLink(obj?.gioHangId, obj)}
+                      >
+                        <Row mainAxisAlign={AxisAlign.spaceBetween}>
+                          <h4>Tình trạng: {obj?.tinhTrang}</h4>
+                          <Row mainAxisSize={AxisSize.min}>
+                            <div style={{ marginRight: "2rem" }}>
+                              Ngày đặt: {dateOrder.toLocaleString()}
+                            </div>
+                            <div>Ngày giao: {dateTranfer.toLocaleString()}</div>
+                          </Row>
+                        </Row>
+                        {Object.keys(obj?.sanPham)?.map((key, count) => {
+                          const item = obj?.sanPham[key];
+                          return (
+                            <React.Fragment key={count}>
+                              <Padding all={1}>
+                                <Row mainAxisAlign={AxisAlign.spaceBetween}>
+                                  <Row mainAxisAlign={AxisAlign.start}>
+                                    <div style={{ display: "flex" }}>
+                                      <Image
+                                        style={{
+                                          width: "5rem",
+                                          marginRight: "1rem",
+                                        }}
+                                        src={item?.hinhAnh}
+                                      />
+                                      <div style={{ width: "30rem" }}>
+                                        <b style={linkItemStyle}>{item?.ten}</b>
+                                      </div>
+                                    </div>
+                                    <div style={{ marginRight: "10rem" }}>
+                                      Số lượng: {item?.soLuong}
+                                    </div>
+                                    {item?.giamGia === 0 ? (
+                                      <React.Fragment>
+                                        <div>
+                                          Giá gốc: {thousandDot(item?.giaGoc)}
+                                          <u>đ</u>
+                                        </div>
+                                      </React.Fragment>
+                                    ) : (
+                                      <React.Fragment>
+                                        <del>
+                                          Giá gốc: {thousandDot(item?.giaGoc)}
+                                          <u>đ</u>
+                                        </del>
+                                        <div>
+                                          Giá gốc:{" "}
+                                          {thousandDot(
+                                            item?.giaGoc -
+                                              item?.giaGoc * item?.giamGia
+                                          )}
+                                          <u>đ</u>
+                                        </div>
+                                      </React.Fragment>
+                                    )}
+                                  </Row>
+                                  <div>
+                                    {thousandDot(item?.giaTong)}
+                                    <u>đ</u>
                                   </div>
-                                </div>
-                                <div style={{ marginRight: "10rem" }}>
-                                  Số lượng: {item?.soLuong}
-                                </div>
-                                {item?.giamGia === 0 ? (
-                                  <React.Fragment>
-                                    <div>
-                                      Giá gốc: {thousandDot(item?.giaGoc)}
-                                      <u>đ</u>
-                                    </div>
-                                  </React.Fragment>
-                                ) : (
-                                  <React.Fragment>
-                                    <del>
-                                      Giá gốc: {thousandDot(item?.giaGoc)}
-                                      <u>đ</u>
-                                    </del>
-                                    <div>
-                                      Giá gốc:{" "}
-                                      {thousandDot(
-                                        item?.giaGoc -
-                                          item?.giaGoc * item?.giamGia
-                                      )}
-                                      <u>đ</u>
-                                    </div>
-                                  </React.Fragment>
-                                )}
-                              </Row>
-                              <div>
-                                {thousandDot(item?.giaTong)}
-                                <u>đ</u>
-                              </div>
-                            </Row>
-                          </Padding>
-                        </React.Fragment>
-                      );
-                    })}
-                    <h5 style={{ textAlign: "right" }}>
-                      Tổng tiền:{" "}
-                      <span style={{ color: "red" }}>
-                        {thousandDot(obj?.thanhTien)}
-                        <u>đ</u>
-                      </span>
-                    </h5>
-                    <hr />
-                  </React.Fragment>
-                ))}
+                                </Row>
+                              </Padding>
+                            </React.Fragment>
+                          );
+                        })}
+                        <h5 style={{ textAlign: "right" }}>
+                          Tổng tiền:{" "}
+                          <span style={{ color: "red" }}>
+                            {thousandDot(obj?.thanhTien)}
+                            <u>đ</u>
+                          </span>
+                        </h5>
+                      </div>
+                      <hr />
+                    </React.Fragment>
+                  );
+                })}
               </React.Fragment>
             )}
             <Row mainAxisAlign={AxisAlign.spaceBetween}>
