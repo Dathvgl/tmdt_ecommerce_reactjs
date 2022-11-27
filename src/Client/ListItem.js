@@ -258,36 +258,38 @@ function FilterItem(props) {
       const base = listBoxs?.some((x) => x.checked);
       listBoxs[0].checked = base ? false : true;
 
-      obj.value = listBoxs
-        ?.filter((item) => item?.checked)
-        ?.map((item) => {
-          if (label !== "mucGia" && label !== "manHinh") return item?.name;
+      if (base) {
+        obj.value = listBoxs
+          ?.filter((item) => item?.checked)
+          ?.map((item) => {
+            if (label !== "mucGia" && label !== "manHinh") return item?.name;
 
-          const regex = /(\d)/g;
+            const regex = /(\d)/g;
 
-          if (label === "manHinh") {
-            return Number(item?.name?.match(regex)?.join(""));
-          }
+            if (label === "manHinh") {
+              return Number(item?.name?.match(regex)?.join(""));
+            }
 
-          const price = [0, 0];
-          const num = item?.name?.match(regex)?.join("").toString();
-          price[0] = Number(num?.slice(0, 2));
-          price[1] = Number(num?.slice(2, 4));
+            const price = [0, 0];
+            const num = item?.name?.match(regex)?.join("").toString();
+            price[0] = Number(num?.slice(0, 2));
+            price[1] = Number(num?.slice(2, 4));
 
-          const limited = Number(
-            listBoxs[listBoxs.length - 1]?.name
-              ?.match(regex)
-              ?.join("")
-              .toString()
-          );
+            const limited = Number(
+              listBoxs[listBoxs.length - 1]?.name
+                ?.match(regex)
+                ?.join("")
+                .toString()
+            );
 
-          if (price[1] === 0 && price[0] < limited) {
-            price[1] = price[0];
-            price[0] = 0;
-          }
+            if (price[1] === 0 && price[0] < limited) {
+              price[1] = price[0];
+              price[0] = 0;
+            }
 
-          return price;
-        });
+            return price;
+          });
+      } else obj.value = null;
     } else {
       listBoxs.forEach((item) => (item.checked = false));
       listBoxs[index].checked = !listBoxs[index]?.checked;

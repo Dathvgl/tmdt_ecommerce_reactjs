@@ -6,8 +6,6 @@ export const ProductObj = {
     giamGia: 0,
     nhuCau: "",
     tinhNang: "",
-    danhGia: 0,
-    tongDanhGia: 0,
   },
   thongTin: {
     p_n: "",

@@ -286,7 +286,7 @@ function ProductAdmin() {
                 key: index,
                 id,
                 ten,
-                hinhAnh: hinhAnh[0],
+                hinhAnh: hinhAnh === undefined ? "" : hinhAnh[0],
                 soLuong,
                 gia,
                 giamGia,
