@@ -248,8 +248,6 @@ function CartList(props) {
       })
       .then(async (res) => {
         if (res.data?.url) {
-          window.location.href = res.data?.url;
-
           const { id, hoTen, diaChi } = currentInfo;
           const item = {
             id: orderId,
@@ -263,6 +261,8 @@ function CartList(props) {
             item,
             products,
           });
+
+          window.location.href = res.data?.url;
         }
       })
       .catch((error) => console.error(error));
