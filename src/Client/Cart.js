@@ -216,6 +216,7 @@ function CartList(props) {
               thanhTien: totalPrice,
             };
 
+            localStorage.removeItem("order");
             await axios.put(`${node}/payment/KhachVangLai`, {
               num,
               item,
