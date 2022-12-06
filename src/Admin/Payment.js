@@ -83,7 +83,8 @@ function PaymentAdmin() {
 
   const onAltState = async (item) => {
     const { id, state, stt, items } = item;
-    await axios.put(`${node}/payment/${id}/pay`, { state, num: stt, items });
+    const array = Object.keys(items).map((key) => items[key]);
+    await axios.put(`${node}/payment/${id}/pay`, { state, num: stt, items: array });
     getPayments();
   };
 
